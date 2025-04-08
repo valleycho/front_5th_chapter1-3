@@ -1,6 +1,5 @@
-import { createContext, useContext } from "react";
-import { useMemo } from "../@lib";
-import { useTheme } from "../hooks";
+import { createContext, useContext, useState } from "react";
+import { useCallback } from "../@lib";
 
 interface ThemeContextType {
   theme: string;
@@ -12,18 +11,14 @@ export const ThemeContext = createContext<ThemeContextType | undefined>(
 );
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
-  const { theme, toggleTheme } = useTheme();
+  const [theme, setTheme] = useState("light");
 
-  const themeContextValue: ThemeContextType = useMemo(
-    () => ({
-      theme,
-      toggleTheme,
-    }),
-    [theme, toggleTheme]
-  );
+  const toggleTheme = useCallback(() => {
+    setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
+  }, []);
 
   return (
-    <ThemeContext.Provider value={themeContextValue}>
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
       {children}
     </ThemeContext.Provider>
   );
